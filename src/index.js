@@ -61,7 +61,7 @@ class App extends Component {
 	startFlappyBird(){
 		time = new Date();
 		this.props.dispatch(appActions.start());
-		myReqAnimationId = requestAnimation(this.update.bind(this))
+		myReqAnimationId = requestAnimation(this.update.bind(this));
 	}
 
 	startFlappyBirdAgain(){

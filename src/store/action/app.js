@@ -1,5 +1,17 @@
 import * as Actions from '../actions';
 
-export function increaseCounter (volume = 1) {
-	return { type: Actions.IncreaseCounter, volume };
+export function tick (dt) {
+	return { type: Actions.TICK, dt };
+}
+
+export function bounce() {
+	return { type: Actions.BOUNCE };
+}
+
+export function start() {
+	return { type: Actions.START };
+}
+
+export function startAgain() {
+	return { type: Actions.STARTAGAIN };
 }

@@ -7,130 +7,120 @@ import GameOver from './component/GameOver'
 import Start from './component/Start'
 import StartAgain from './component/StartAgain'
 
-import initialState, {startAgainState} from './services/initialState'
-
-import { bounce, updatePipe, updateGround, updateBird, checkCollition } from './services/gameFunction'
-
+import * as appActions from './store/action/app'
 import {vw, vh, vmin, vmax} from './services/viewport'
+import { Provider, connect } from 'react-redux';
 
 var requestAnimation = requestAnimationFrame;
 var time = new Date();
 var myReqAnimationId;
 
-export default class MainGame extends Component {
-    constructor(props) {
-        super(props);
-        this.state = initialState;
-    }
+type Props = {
+	game?: Object,
+	dispatch?: Function,
+};
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if(nextState.pause){
-            return false;
-        }
-        return true;
-    }
+@connect(({ app }) => {
+	return {
+		game: app.game,
+		gameOver: app.gameOver,
+		start: app.start,
+	}
+})
 
-    componentWillUpdate(nextProps, nextState) {
-        if(nextState.pause){
-            cancelAnimationFrame(myReqAnimationId);
-        }
-    }
+class App extends Component {
+	props: Props;
 
-    update() {
-        var timeDiff = new Date() - time;
-        time = new Date();
-        this.setState({
-            game: {
-                objects: {
-                    bird: updateBird(this.state.game.objects.bird,timeDiff,0.0001),
-                    ground: updateGround(this.state.game.objects.ground),
-                    ground1: updateGround(this.state.game.objects.ground1),
-                    pipe: updatePipe(this.state.game.objects.pipe),
-                    pipe1: updatePipe(this.state.game.objects.pipe1)
-                }
-            },
-            gameOver: checkCollition(this.state.game.objects),
-            start: true,
-            pause: this.state.pause,
-            animate: true,
-        });
-        if (this.state.gameOver) {
-            this.setState({
-                game: this.state.game,
-                gameOver: this.state.gameOver,
-                start: this.state.start,
-                pause: true,
-                animate: this.state.animate,
-            })
-        }
-        myReqAnimationId = requestAnimation(this.update.bind(this))
-    }
+	constructor(props) {
+		super(props);
+		this.state = { pause: false };
+	}
 
-    startFlappyBird(){
-        time = new Date();
-        myReqAnimationId = requestAnimation(this.update.bind(this))
-    }
+	shouldComponentUpdate(nextProps, nextState) {
+		if(nextState.pause){
+			return false;
+		}
+		return true;
+	}
 
-    startFlappyBirdAgain(){
-        time = new Date();
-        this.setState(startAgainState);
-        myReqAnimationId = requestAnimation(this.update.bind(this))
-    }
+	componentWillUpdate(nextProps, nextState) {
+		if(nextProps.gameOver){
+			this.setState({ pause: true });
+			cancelAnimationFrame(myReqAnimationId);
+		}
+	}
 
-    clickMeToBounce(){
-        this.setState({
-            game: {
-                objects: {
-                    bird: bounce(this.state.game.objects.bird),
-                    ground: this.state.game.objects.ground,
-                    ground1: this.state.game.objects.ground1,
-                    pipe: this.state.game.objects.pipe,
-                    pipe1: this.state.game.objects.pipe1
-                }
-            },
-            gameOver: this.state.gameOver,
-            start: this.state.start,
-            pause: this.state.pause,
-            animate: this.state.animate,
-        })
-    }
+	update() {
+		console.log("GameOver:", this.props.game);
+		var timeDiff = new Date() - time;
+		time = new Date();
+		this.props.dispatch(appActions.tick(timeDiff));
+		myReqAnimationId = requestAnimation(this.update.bind(this))
+	}
 
-    render() {
-        return(
-            <TouchableOpacity style={styles.image}
-                              activeOpacity={1}
-                              onPress = {this.clickMeToBounce.bind(this)}>
-                <Image style={ styles.image } source={ require('./images/bg.png')}>
-                    <View style={{position:'absolute', top: 0, left: 0}}>
-                        {this.state.gameOver ? <GameOver/> : <Text></Text>}
-                        {!this.state.start ? <Start onStart = {this.startFlappyBird.bind(this)}/> : <Text></Text>}
-                        <Bird x = {this.state.game.objects.bird.position.x * vw}
-                              y = {this.state.game.objects.bird.position.y * vh}
-                              animate = {this.state.animate}/>
-                        <Pipe x = {this.state.game.objects.pipe.position}
-                              topHeight = {this.state.game.objects.pipe.topHeight}/>
-                        <Pipe x = {this.state.game.objects.pipe1.position}
-                              topHeight = {this.state.game.objects.pipe1.topHeight}/>
-                        <Ground x = {this.state.game.objects.ground.position.x}
-                                y = {this.state.game.objects.ground.position.y}
-                                width = {this.state.game.objects.ground.dimension.width}
-                                height = {this.state.game.objects.ground.dimension.height}/>
-                        <Ground x = {this.state.game.objects.ground1.position.x}
-                                y = {this.state.game.objects.ground1.position.y}
-                                width = {this.state.game.objects.ground1.dimension.width}
-                                height = {this.state.game.objects.ground1.dimension.height}/>
-                        {(this.state.gameOver && this.state.start ) ? <StartAgain onStartAgain = {this.startFlappyBirdAgain.bind(this)}/> : <Text></Text>}
-                    </View>
-                </Image>
-            </TouchableOpacity>
-        )
-    }
+	startFlappyBird(){
+		time = new Date();
+		this.props.dispatch(appActions.start());
+		myReqAnimationId = requestAnimation(this.update.bind(this))
+	}
+
+	startFlappyBirdAgain(){
+		console.log("Props <<<<:", this.props.game);
+		time = new Date();
+		this.props.dispatch(appActions.startAgain());
+		this.setState({ pause: false });
+	}
+
+	clickMeToBounce(){
+		this.props.dispatch(appActions.bounce());
+	}
+
+	render() {
+		return(
+			<TouchableOpacity style={styles.image}
+							  activeOpacity={1}
+							  onPress = {this.clickMeToBounce.bind(this)}>
+				<Image style={ styles.image } source={ require('./images/bg.png')}>
+					<View style={{position:'absolute', top: 0, left: 0}}>
+						{this.props.gameOver ? <GameOver/> : <Text></Text>}
+						{!this.props.start ? <Start onStart = {this.startFlappyBird.bind(this)}/> : <Text></Text>}
+						<Bird x = {this.props.game.objects.bird.position.x * vw}
+							  y = {this.props.game.objects.bird.position.y * vh}
+							  animate = {true}/>
+						<Pipe x = {this.props.game.objects.pipe.position}
+							  topHeight = {this.props.game.objects.pipe.topHeight}/>
+						<Pipe x = {this.props.game.objects.pipe1.position}
+							  topHeight = {this.props.game.objects.pipe1.topHeight}/>
+						<Ground x = {this.props.game.objects.ground.position.x}
+								y = {this.props.game.objects.ground.position.y}
+								width = {this.props.game.objects.ground.dimension.width}
+								height = {this.props.game.objects.ground.dimension.height}/>
+						<Ground x = {this.props.game.objects.ground1.position.x}
+								y = {this.props.game.objects.ground1.position.y}
+								width = {this.props.game.objects.ground1.dimension.width}
+								height = {this.props.game.objects.ground1.dimension.height}/>
+						{(this.props.gameOver && this.props.start ) ? <StartAgain onStartAgain = {this.startFlappyBirdAgain.bind(this)}/> : <Text></Text>}
+					</View>
+				</Image>
+			</TouchableOpacity>
+		)
+	}
+}
+
+type ContainerProps = {
+	store: Object,
+};
+
+export default function AppContainer({ store }: ContainerProps) {
+	return <Provider store={store}>
+		<App/>
+	</Provider>;
 }
 
 const styles = StyleSheet.create({
-    image: {
-        flex: 1,
-        alignSelf: 'stretch',
-        width: null,
-    }
-})
+	image: {
+		flex: 1,
+		alignSelf: 'stretch',
+		width: null,
+	}
+});

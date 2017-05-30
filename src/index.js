@@ -51,7 +51,7 @@ class App extends Component {
 	}
 
 	update() {
-		console.log("GameOver:", this.props.game);
+		console.log("GameOver:", this.props.gameOver);
 		var timeDiff = new Date() - time;
 		time = new Date();
 		this.props.dispatch(appActions.tick(timeDiff));

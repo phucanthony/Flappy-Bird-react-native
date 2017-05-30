@@ -18,7 +18,7 @@ export default class Pipe extends Component {
                     borderRightWidth: 2,
                     borderColor: 'black',
                     height: this.props.topHeight*vh,
-                }}></View>
+                }}/>
                 <View style={{
                     backgroundColor: '#59DA5D',
                     borderLeftWidth: 2,
@@ -26,11 +26,10 @@ export default class Pipe extends Component {
                     borderBottomWidth: 2,
                     borderTopWidth: 2,
                     borderColor: 'black',
-                    height: 3*vh}}></View>
+                    height: 3*vh}}/>
                 <View style={{
                     height: 20*vh
-                }}>
-                </View>
+                }}/>
                 <View style={{
                     backgroundColor: '#59DA5D',
                     borderLeftWidth: 2,
@@ -38,14 +37,14 @@ export default class Pipe extends Component {
                     borderBottomWidth: 2,
                     borderTopWidth: 2,
                     borderColor: 'black',
-                    height: 3*vh}}></View>
+                    height: 3*vh}}/>
                 <View style={{
                     backgroundColor: '#59DA5D',
                     borderLeftWidth: 2,
                     borderRightWidth: 2,
                     borderColor: 'black',
                     flex: 1
-                }}></View>
+                }}/>
             </View>
         )
     }

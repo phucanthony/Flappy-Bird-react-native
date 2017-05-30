@@ -207,17 +207,21 @@ function detectCollisionBirdPipe(bird, pipe){
 	var pipeXPosition = pipe.position;
 	var pipeHolePosition = pipe.topHeight;
 
-	if ((birdXPosition > pipeXPosition) && (birdXPosition <= pipeXPosition + 15) && (birdYPosition < pipeHolePosition)) {
-		return true
+	if ((birdXPosition > pipeXPosition) && (birdXPosition <= pipeXPosition + 10) && (birdYPosition < pipeHolePosition)) {
+		{	console.log('Case 1 <<<<');
+			return true }
 	}
-	if ((birdXPosition > pipeXPosition) && (birdXPosition <= pipeXPosition + 15) && (birdYPosition + 4 >= (pipeHolePosition + 20))) {
-		return true
+	if ((birdXPosition > pipeXPosition) && (birdXPosition <= pipeXPosition + 10) && (birdYPosition - 4 >= (pipeHolePosition + 20))) {
+		{	console.log('Case 2 <<<<');
+			return true }
 	}
-	if ((birdXPosition >= pipeXPosition - birdWidth) && (birdXPosition <= pipeXPosition) && (birdYPosition - 4 <= pipeHolePosition )) {
-		return true
+	if ((birdXPosition >= pipeXPosition - birdWidth) && (birdXPosition <= pipeXPosition) && (birdYPosition <= pipeHolePosition )) {
+		{	console.log('Case 3 <<<<');
+			return true }
 	}
 	if ((birdXPosition >= pipeXPosition - birdWidth) && (birdXPosition <= pipeXPosition) && (birdYPosition >= pipeHolePosition + 20)) {
-		return true
+		{	console.log('Case 4 <<<<');
+			return true }
 	}
 }
 

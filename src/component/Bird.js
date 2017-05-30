@@ -1,6 +1,3 @@
-/**
- * Created by Admin on 15-May-17.
- */
 import React, { Component } from 'react';
 import { View, Image } from 'react-native';
 import {vw, vh, vmin, vmax} from '../services/viewport'
@@ -55,8 +52,8 @@ export default class Bird extends Component {
                 position: 'absolute',
                 left: this.props.x,
                 top: this.props.y,
-                width: 10*vmin,
-                height: 10*vmin,
+                width: 10*vw,
+                height: 5*vh,
                 overflow: 'hidden',
             }}>
                 <View style={ { marginTop: -this.state.margin*vmin} }>
@@ -70,4 +67,3 @@ export default class Bird extends Component {
         )
     }
 }
-

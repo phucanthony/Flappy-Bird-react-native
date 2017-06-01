@@ -6,6 +6,7 @@ import Ground from './component/Ground'
 import GameOver from './component/GameOver'
 import Start from './component/Start'
 import StartAgain from './component/StartAgain'
+import Score from './component/Score'
 
 import * as appActions from './store/action/app'
 import {vw, vh, vmin, vmax} from './services/viewport'
@@ -25,6 +26,7 @@ type Props = {
 		game: app.game,
 		gameOver: app.gameOver,
 		start: app.start,
+		score: app.score,
 	}
 })
 
@@ -99,6 +101,7 @@ class App extends Component {
 								y = {this.props.game.objects.ground1.position.y}
 								width = {this.props.game.objects.ground1.dimension.width}
 								height = {this.props.game.objects.ground1.dimension.height}/>
+						<Score score = {this.props.score}/>
 						{(this.props.gameOver && this.props.start ) ? <StartAgain onStartAgain = {this.startFlappyBirdAgain.bind(this)}/> : <Text></Text>}
 					</View>
 				</Image>

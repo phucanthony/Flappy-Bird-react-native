@@ -68,6 +68,7 @@ const initialState = {
   	},
 	gameOver: false,
 	start: false,
+	score: 0,
 };
 
 const startAgainState = {
@@ -136,6 +137,7 @@ const startAgainState = {
 	},
 	gameOver: false,
 	start: true,
+	score: 0,
 };
 
 function getUpdatedVelocity( newPosition, bird, timeLapsed, gravity ){
@@ -173,8 +175,7 @@ function getUpdateHole(pipe){
 		return pipe.topHeight;
 	}
 	else {
-		var updatedHolePosition = Math.floor(Math.random()*(50-10+1))+10;
-		return updatedHolePosition;
+		return updatedHolePosition = Math.floor(Math.random()*(50-10+1))+10;
 	}
 }
 
@@ -252,6 +253,19 @@ function bounce(bird){
 	return newBird = Object.assign({}, bird, { velocity: bounceUpdatedVelocity })
 }
 
+function checkForBirdPass(pipe) {
+	var pipePositionX = pipe.position;
+	return (pipePositionX + 15*vw == 46);
+}
+
+function checkForScoreUp(gameObjects,score) {
+		if (checkForBirdPass(gameObjects.pipe) ||
+			checkForBirdPass(gameObjects.pipe1)) {
+			score = score + 1;
+		}
+		return score;
+}
+
 export default utils.appReducer((state = initialState, action) => {
 	switch (action.type) {
 		case Actions.TICK:
@@ -265,6 +279,7 @@ export default utils.appReducer((state = initialState, action) => {
 						ground1: updateGround(state.game.objects.ground1)
 					}},
 				gameOver: checkCollision(state.game.objects),
+				score: checkForScoreUp(state.game.objects,state.score),
 			};
 		case Actions.BOUNCE:
 			return {...state,

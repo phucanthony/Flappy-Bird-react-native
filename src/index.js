@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Button } from 'react-native';
-import Bird from './component/Bird'
-import Pipe from './component/Pipe'
-import Ground from './component/Ground'
-import GameOver from './component/GameOver'
-import Start from './component/Start'
-import StartAgain from './component/StartAgain'
-import Score from './component/Score'
-
-import * as appActions from './store/action/app'
-import {vw, vh, vmin, vmax} from './services/viewport'
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import { Provider, connect } from 'react-redux';
+import Bird from './component/Bird';
+import Pipe from './component/Pipe';
+import Ground from './component/Ground';
+import GameOver from './component/GameOver';
+import Start from './component/Start';
+import StartAgain from './component/StartAgain';
+import Score from './component/Score';
 
-var requestAnimation = requestAnimationFrame;
-var time = new Date();
-var myReqAnimationId;
+import * as appActions from './store/action/app';
+import { vw, vh, vmin, vmax } from './services/viewport';
+
+const requestAnimation = requestAnimationFrame;
+let time = new Date();
+let myReqAnimationId;
 
 type Props = {
 	game?: Object,
@@ -27,7 +27,7 @@ type Props = {
 		gameOver: app.gameOver,
 		start: app.start,
 		score: app.score,
-	}
+	};
 })
 
 class App extends Component {
@@ -39,74 +39,75 @@ class App extends Component {
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
-		if(nextState.pause){
-			return false;
-		}
-		return true;
+		return !nextState.pause;
 	}
 
 	componentWillUpdate(nextProps, nextState) {
-		if(nextProps.gameOver){
+		if (nextProps.gameOver) {
 			this.setState({ pause: true });
 			cancelAnimationFrame(myReqAnimationId);
 		}
 	}
 
 	update() {
-		console.log("GameOver:", this.props.gameOver);
-		var timeDiff = new Date() - time;
+		const timeDiff = new Date() - time;
 		time = new Date();
 		this.props.dispatch(appActions.tick(timeDiff));
-		myReqAnimationId = requestAnimation(this.update.bind(this))
+		myReqAnimationId = requestAnimation(this.update.bind(this));
 	}
 
-	startFlappyBird(){
+	startFlappyBird() {
 		time = new Date();
 		this.props.dispatch(appActions.start());
 		myReqAnimationId = requestAnimation(this.update.bind(this));
 	}
 
-	startFlappyBirdAgain(){
-		console.log("Props <<<<:", this.props.game);
+	startFlappyBirdAgain() {
 		time = new Date();
 		this.props.dispatch(appActions.startAgain());
 		this.setState({ pause: false });
 	}
 
-	clickMeToBounce(){
+	clickMeToBounce() {
 		this.props.dispatch(appActions.bounce());
 	}
 
 	render() {
-		return(
-			<TouchableOpacity style={styles.image}
-							  activeOpacity={1}
-							  onPress = {this.clickMeToBounce.bind(this)}>
-				<Image style={ styles.image } source={ require('./images/bg.png')}>
-					<View style={{position:'absolute', top: 0, left: 0}}>
-						{this.props.gameOver ? <GameOver/> : <Text></Text>}
-						{!this.props.start ? <Start onStart = {this.startFlappyBird.bind(this)}/> : <Text></Text>}
-						<Bird x = {this.props.game.objects.bird.position.x * vw}
-							  y = {this.props.game.objects.bird.position.y * vh}
-							  animate = {true}/>
-						<Pipe x = {this.props.game.objects.pipe.position}
-							  topHeight = {this.props.game.objects.pipe.topHeight}/>
-						<Pipe x = {this.props.game.objects.pipe1.position}
-							  topHeight = {this.props.game.objects.pipe1.topHeight}/>
-						<Ground x = {this.props.game.objects.ground.position.x}
-								y = {this.props.game.objects.ground.position.y}
-								width = {this.props.game.objects.ground.dimension.width}
-								height = {this.props.game.objects.ground.dimension.height}/>
-						<Ground x = {this.props.game.objects.ground1.position.x}
-								y = {this.props.game.objects.ground1.position.y}
-								width = {this.props.game.objects.ground1.dimension.width}
-								height = {this.props.game.objects.ground1.dimension.height}/>
-						<Score score = {this.props.score}/>
-						{(this.props.gameOver && this.props.start ) ? <StartAgain onStartAgain = {this.startFlappyBirdAgain.bind(this)}/> : <Text></Text>}
+		return (
+			<TouchableOpacity
+				style={styles.image}
+				activeOpacity={1}
+				onPress={() => this.clickMeToBounce()}>
+				<ImageBackground style={styles.image}
+												 source={{ uri: 'https://previews.123rf.com/images/svetlanaprikhnenko/svetlanaprikhnenko1304/svetlanaprikhnenko130400007/18847705-seamless-background-with-footprint-of-cat-and-dog-Stock-Vector.jpg' }}
+												 resizeMode="cover"
+												 // source={require('./images/bg.png')}
+				>
+					<View style={{ position:'absolute', top: 0, left: 0 }}>
+						{this.props.gameOver ? <GameOver/> : <Text />}
+						{!this.props.start ? <Start onStart={() => this.startFlappyBird()}/> : <Text />}
+						<Bird x={this.props.game.objects.bird.position.x * vw}
+									y={this.props.game.objects.bird.position.y * vh} animate/>
+						<Pipe x={this.props.game.objects.pipe.position}
+									topHeight={this.props.game.objects.pipe.topHeight}/>
+						<Pipe x={this.props.game.objects.pipe1.position}
+									topHeight={this.props.game.objects.pipe1.topHeight}/>
+						<Ground
+							x={this.props.game.objects.ground.position.x}
+							y={this.props.game.objects.ground.position.y}
+							width={this.props.game.objects.ground.dimension.width}
+							height={this.props.game.objects.ground.dimension.height}/>
+						<Ground
+							x={this.props.game.objects.ground1.position.x}
+							y={this.props.game.objects.ground1.position.y}
+							width={this.props.game.objects.ground1.dimension.width}
+							height={this.props.game.objects.ground1.dimension.height}/>
+						<Score score={this.props.score}/>
+						{(this.props.gameOver && this.props.start) ? <StartAgain onStartAgain={() => this.startFlappyBirdAgain()}/> : <Text />}
 					</View>
-				</Image>
+				</ImageBackground>
 			</TouchableOpacity>
-		)
+		);
 	}
 }
 

@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "FlappyDog",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -12,12 +12,13 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.22.0",
-    "react": "^15.5.4",
-    "react-native": "0.41.1",
+    "react": "^16.2.0",
+    "react-native": "^0.51.0",
     "react-native-drawer": "^2.3.0",
     "react-native-vector-icons": "github:cloudle/react-native-vector-icons",
-    "react-native-web": "0.0.77",
-    "react-universal-ui": "0.0.98"
+    "react-native-web": "^0.2.2",
+    "react-universal-ui": "^0.1.71",
+    "redux": "^3.7.2"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -46,7 +47,7 @@
     "json-loader": "^0.5.4",
     "pretty-bytes": "^4.0.2",
     "progress-bar-webpack-plugin": "^1.9.3",
-    "react-dom": "^15.5.4",
+    "react-dom": "^16.2.0",
     "react-hot-loader": "^3.0.0-beta.6",
     "react-test-renderer": "~15.4.0-rc.4",
     "redux-logger": "^2.8.1",

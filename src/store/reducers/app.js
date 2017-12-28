@@ -1,6 +1,6 @@
-import * as Actions from '../actions'
-import {vw, vh, vmin, vmax } from '../../services/viewport'
-import { utils } from 'react-universal-ui';
+import { appReducer } from 'react-universal-ui';
+import * as Actions from '../actions';
+import { vw, vh, vmin, vmax } from '../../services/viewport';
 
 const initialState = {
 	gravity: 0.0001,
@@ -140,160 +140,154 @@ const startAgainState = {
 	score: 0,
 };
 
-function getUpdatedVelocity( newPosition, bird, timeLapsed, gravity ){
+function getUpdatedVelocity(newPosition, bird, timeLapsed, gravity) {
 	let updatedVelocity = bird.velocity.y + timeLapsed * gravity;
 	if (newPosition > 100) {
 		updatedVelocity = 0;
 	}
-	return { x: bird.velocity.x, y: updatedVelocity }
+	return { x: bird.velocity.x, y: updatedVelocity };
 }
 
-function getUpdatedY(bird, timeLapsed, gravity){
-	let distanceCovered = bird.velocity.y * timeLapsed + 0.5 * gravity * timeLapsed * timeLapsed;
-	return { x: bird.position.x , y: bird.position.y + distanceCovered }
+function getUpdatedY(bird, timeLapsed, gravity) {
+	const distanceCovered = bird.velocity.y * timeLapsed + 0.5 * gravity * timeLapsed * timeLapsed;
+	return { x: bird.position.x, y: bird.position.y + distanceCovered };
 }
 
-function updateBird(bird, dt = 1000/60, gravity = 0.0001){
-	var newPosition = getUpdatedY(bird,dt,gravity);
-	var updatedVelocity = getUpdatedVelocity(newPosition,bird,dt,gravity);
+function updateBird(bird, dt = 1000 / 60, gravity = 0.0001) {
+	const newPosition = getUpdatedY(bird, dt, gravity);
+	const updatedVelocity = getUpdatedVelocity(newPosition, bird, dt, gravity);
 	return newBird = Object.assign({}, bird,
-		{ position: newPosition, velocity: updatedVelocity })
+		{ position: newPosition, velocity: updatedVelocity });
 }
 
 function getUpdateDistanceForPipe(pipe) {
-	var distanceCovered = pipe.velocity.x;
-	if (pipe.position > 0 - 15 * vw ) {
-		return pipe.position + distanceCovered
-	}
-	else {
-		return 100
+	const distanceCovered = pipe.velocity.x;
+	if (pipe.position > 0 - (15 * vw)) {
+		return pipe.position + distanceCovered;
+	}	else {
+		return 100;
 	}
 }
 
-function getUpdateHole(pipe){
-	if (pipe.position > 0 - 15 * vw) {
+function getUpdateHole(pipe) {
+	if (pipe.position > 0 - (15 * vw)) {
 		return pipe.topHeight;
-	}
-	else {
-		return updatedHolePosition = Math.floor(Math.random()*(50-10+1))+10;
+	}	else {
+		return Math.floor(Math.random() * ((50 - 10) + 1)) + 10;
 	}
 }
 
-function updatePipe(pipe){
-	var newPositionOfPipe = getUpdateDistanceForPipe(pipe);
-	var newHolePosition = getUpdateHole(pipe);
-	return newPipe = Object.assign({}, pipe, {position: newPositionOfPipe, topHeight: newHolePosition})
+function updatePipe(pipe) {
+	const newPositionOfPipe = getUpdateDistanceForPipe(pipe);
+	const newHolePosition = getUpdateHole(pipe);
+	return Object.assign({}, pipe, { position: newPositionOfPipe, topHeight: newHolePosition });
 }
 
 function getUpdatedGroundPosition(ground) {
-	var distanceCovered = ground.velocity.x;
+	const distanceCovered = ground.velocity.x;
 	if (ground.position.x > -97) {
-		return { x: ground.position.x + distanceCovered, y: 80 }
-	}
-	else {
-		return { x: 100, y: 80}
+		return { x: ground.position.x + distanceCovered, y: 80 };
+	}	else {
+		return { x: 100, y: 80 };
 	}
 }
 
-function updateGround(ground){
-	var newGroundPosition = getUpdatedGroundPosition(ground);
-	return newGround = Object.assign({}, ground, {position: newGroundPosition})
+function updateGround(ground) {
+	const newGroundPosition = getUpdatedGroundPosition(ground);
+	return newGround = Object.assign({}, ground, { position: newGroundPosition });
 }
 
-function detectCollisionBirdPipe(bird, pipe){
-	var birdXPosition = bird.position.x;
-	var birdYPosition = bird.position.y;
-	var birdWidth = bird.dimension.width;
+function detectCollisionBirdPipe(bird, pipe) {
+	const birdXPosition = bird.position.x;
+	const birdYPosition = bird.position.y;
+	const birdWidth = bird.dimension.width;
 
-	var pipeXPosition = pipe.position;
-	var pipeHolePosition = pipe.topHeight;
+	const pipeXPosition = pipe.position;
+	const pipeHolePosition = pipe.topHeight;
 
 	if ((birdXPosition > pipeXPosition) && (birdXPosition <= pipeXPosition + 10) && (birdYPosition < pipeHolePosition)) {
 		{	console.log('Case 1 <<<<');
-			return true }
+			return true; }
 	}
 	if ((birdXPosition > pipeXPosition) && (birdXPosition <= pipeXPosition + 10) && (birdYPosition - 4 >= (pipeHolePosition + 20))) {
 		{	console.log('Case 2 <<<<');
-			return true }
+			return true; }
 	}
-	if ((birdXPosition >= pipeXPosition - birdWidth) && (birdXPosition <= pipeXPosition) && (birdYPosition <= pipeHolePosition )) {
+	if ((birdXPosition >= pipeXPosition - birdWidth) && (birdXPosition <= pipeXPosition) && (birdYPosition <= pipeHolePosition)) {
 		{	console.log('Case 3 <<<<');
-			return true }
+			return true; }
 	}
 	if ((birdXPosition >= pipeXPosition - birdWidth) && (birdXPosition <= pipeXPosition) && (birdYPosition >= pipeHolePosition + 20)) {
 		{	console.log('Case 4 <<<<');
-			return true }
+			return true; }
 	}
 }
 
-function detectCollisionGround(bird){
-	var birdYPosition = bird.position.y;
-	var birdHeight = bird.dimension.height;
-	if ((birdYPosition < 0) || (birdYPosition + birdHeight > 80))
-	{return true}
+function detectCollisionGround(bird) {
+	const birdYPosition = bird.position.y;
+	const birdHeight = bird.dimension.height;
+	if ((birdYPosition < 0) || (birdYPosition + birdHeight > 80))	{ return true; }
 }
 
-function checkCollision(gameObjects){
-	if (detectCollisionBirdPipe(gameObjects.bird,gameObjects.pipe)) {
+function checkCollision(gameObjects) {
+	if (detectCollisionBirdPipe(gameObjects.bird, gameObjects.pipe)) {
 		return true;
 	}
-	if (detectCollisionBirdPipe(gameObjects.bird,gameObjects.pipe1)) {
+	if (detectCollisionBirdPipe(gameObjects.bird, gameObjects.pipe1)) {
 		return true;
 	}
 	if (detectCollisionGround(gameObjects.bird)) {
 		return true;
-	}
-	else {
+	}	else {
 		return false;
 	}
 }
 
-function bounce(bird){
-	var bounceUpdatedVelocity = { x: bird.velocity.x, y: -0.05 };
-	return newBird = Object.assign({}, bird, { velocity: bounceUpdatedVelocity })
+function bounce(bird) {
+	const bounceUpdatedVelocity = { x: bird.velocity.x, y: -0.05 };
+	return Object.assign({}, bird, { velocity: bounceUpdatedVelocity });
 }
 
 function checkForBirdPass(pipe) {
-	var pipePositionX = pipe.position;
-	return (pipePositionX + 15*vw == 46);
+	const pipePositionX = pipe.position;
+ 	return (pipePositionX + 15 === 46);
 }
 
-function checkForScoreUp(gameObjects,score) {
-		if (checkForBirdPass(gameObjects.pipe) ||
-			checkForBirdPass(gameObjects.pipe1)) {
-			score = score + 1;
-		}
-		return score;
-}
-
-export default utils.appReducer((state = initialState, action) => {
-	switch (action.type) {
-		case Actions.TICK:
-			return {...state,
-				game: {...state.game,
-					objects: {...state.game.objects,
-						bird: updateBird(state.game.objects.bird, action.dt, state.gravity),
-						pipe: updatePipe(state.game.objects.pipe),
-						pipe1: updatePipe(state.game.objects.pipe1),
-						ground: updateGround(state.game.objects.ground),
-						ground1: updateGround(state.game.objects.ground1)
-					}},
-				gameOver: checkCollision(state.game.objects),
-				score: checkForScoreUp(state.game.objects,state.score),
-			};
-		case Actions.BOUNCE:
-			return {...state,
-				game: {...state.game,
-					objects: {...state.game.objects,
-						bird: bounce(state.game.objects.bird)
-					}
-				}
-			};
-		case Actions.START:
-			return {...state, start: true };
-		case Actions.STARTAGAIN:
-			return startAgainState;
-		default:
-			return state;
+function checkForScoreUp(gameObjects, score) {
+	if (checkForBirdPass(gameObjects.pipe) || checkForBirdPass(gameObjects.pipe1)) {
+		score += 1;
 	}
-})
+	return score;
+}
+
+export default appReducer((state = initialState, action) => {
+	switch (action.type) {
+	case Actions.TICK:
+		return { ...state,
+			game: { ...state.game,
+				objects: { ...state.game.objects,
+					bird: updateBird(state.game.objects.bird, action.dt, state.gravity),
+					pipe: updatePipe(state.game.objects.pipe),
+					pipe1: updatePipe(state.game.objects.pipe1),
+					ground: updateGround(state.game.objects.ground),
+					ground1: updateGround(state.game.objects.ground1)
+				} },
+			gameOver: checkCollision(state.game.objects),
+			score: checkForScoreUp(state.game.objects, state.score),
+		};
+	case Actions.BOUNCE:
+		return { ...state,
+			game: { ...state.game,
+				objects: { ...state.game.objects,
+					bird: bounce(state.game.objects.bird)
+				}
+			}
+		};
+	case Actions.START:
+		return { ...state, start: true };
+	case Actions.STARTAGAIN:
+		return startAgainState;
+	default:
+		return state;
+	}
+});

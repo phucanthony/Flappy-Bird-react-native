@@ -4,9 +4,14 @@ import reducers from './reducers';
 
 const DEVTOOLS = '__REDUX_DEVTOOLS_EXTENSION_COMPOSE__',
 	composeEnhancers = window[DEVTOOLS] || compose,
-	logger = createLogger();
+	loggerIncludes = new Set([]),
+	logger = createLogger({
+		predicate: (getState, action) => {
+			return loggerIncludes.has(action.type);
+		},
+	});
 
-export default function configureStore (initialState) {
+export default function configureStore(initialState) {
 	const enhancers = composeEnhancers(
 		applyMiddleware(logger)
 	);

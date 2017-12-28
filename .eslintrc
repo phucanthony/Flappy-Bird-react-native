@@ -23,6 +23,8 @@
     "no-unused-vars": "warn",
     "no-else-return": "off",
     "no-use-before-define": "off",
+    "no-mixed-spaces-and-tabs": "off",
+    "max-len": "off",
     "arrow-body-style": "off",
     "one-var-declaration-per-line": "off",
     "import/no-extraneous-dependencies": "off",
@@ -40,7 +42,8 @@
     "react/jsx-indent": "off",
     "react/jsx-closing-bracket-location": "off",
     "react/jsx-space-before-closing": "off",
-    "react/jsx-tag-spacing": "off"
+    "react/jsx-tag-spacing": "off",
+    "react/jsx-first-prop-new-line": "off"
   },
   "globals": {
     "localStorage": true,

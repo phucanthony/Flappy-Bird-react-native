@@ -1,4 +1,4 @@
-package com.app;
+package com.flappydog;
 
 import android.app.Application;
 
